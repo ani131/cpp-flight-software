@@ -13,22 +13,29 @@ void TelemetryTask::read() {
     global_registry.telemetry.status = status;
 
     if (status) {
-        queue<string> packets = this->telemetry.read(-1);
         // For packet in packets read from telemetry, push packet to ingest queue
-        const string &h = packets.front();
+        queue<string> packets = this->telemetry.read(-1);
 
         for (const string &packet_string_group = packets.front(); !packets.empty(); packets.pop()) {
             log("Telemetry: Read packet group: " + packet_string_group);
             // strip of the "END"s off each packet_string_group string
             vector<string> split_packets = Util::split(packet_string_group, "END");
             for (auto packet_string : split_packets) {
-                if (!packet_string.empty()) {
-                    log("Telemetry: Processing packet: " + packet_string);
-                    json packet_json = json::parse(packet_string);
-                    Packet packet;
+                int first_bracket = packet_string.find('{');
+                if (first_bracket == string::npos) {
+                    log("Telemetry: Warn: Packet content had no JSON");
+                } else {
+                    if (first_bracket > 0) {
+                        packet_string = packet_string.substr(first_bracket);
+                    }
+                    if (!packet_string.empty()) {
+                        log("Telemetry: Processing packet: " + packet_string);
+                        json packet_json = json::parse(packet_string);
+                        Packet packet;
 
-                    from_json(packet_json, packet);
-                    global_registry.telemetry.ingest_queue.push(packet);
+                        from_json(packet_json, packet);
+                        global_registry.telemetry.ingest_queue.push(packet);
+                    }
                 }
             }
         }

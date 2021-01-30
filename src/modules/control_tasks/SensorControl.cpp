@@ -153,6 +153,6 @@ void SensorControl::send_sensor_data() {
         }
     }
 
-    global_flag.log_info("sensor_data", sensor_data_json);
+    global_flag.log_info("sensor_data", json{{"sensors", sensor_data_json}});
 }
 

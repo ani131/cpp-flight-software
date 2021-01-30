@@ -7,7 +7,6 @@
 using boost::asio::ip::address;
 
 Telemetry::Telemetry() {
-    // Initialize variables
     connection = false;
 }
 
@@ -41,6 +40,7 @@ bool Telemetry::write(const Packet& packet) {
     boost::asio::write(socket, boost::asio::buffer(packet_string), boost::asio::transfer_all(), error);
 
     if (error) {
+        log("SYSTEM ERROR: Telemetry::write()");
         throw boost::system::system_error(error);
     }
 

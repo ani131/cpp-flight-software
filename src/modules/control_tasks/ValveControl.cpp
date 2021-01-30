@@ -46,11 +46,11 @@ void ValveControl::send_valve_data() {
                 {"state", solenoid_state_map.at(valve_info.state)},
                 {"actuation_type", actuation_type_inverse_map.at(valve_info.actuation_type)}
             };
-            std::cout << valve_data_json.dump() << std::endl;
+//            std::cout << valve_data_json.dump() << std::endl;
         }
     }
 
-    global_flag.log_info("valve_data", valve_data_json);
+    global_flag.log_info("valve_data", json{{"valves", valve_data_json}});
 }
 
 void ValveControl::abort() {
