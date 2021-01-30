@@ -88,8 +88,10 @@ void TelemetryControl::ingest(const Log& log) {
     (this->*function)(param_values); // call function which maps to the GS command sent w/ all params necessary
 }
 void TelemetryControl::heartbeat(const vector<string>& args) {
+    const bool is_aborting = global_registry.general.hard_abort || global_registry.general.soft_abort;
     global_flag.log_info("heartbeat", {
         {"header", "heartbeat"},
+        {"mode", is_aborting ? "Abort" : "Normal"},
         {"response", "OK"}
     });
 }
