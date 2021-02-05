@@ -35,7 +35,7 @@ bool Telemetry::write(const Packet& packet) {
 
     // Note: add "END" at the end of the packet, so packets are split correctly
     string packet_string = packet_json.dump() + "END";
-    log("Telemetry: Sending packet: " + packet_string);
+//    log("Telemetry: Sending packet: " + packet_string);
     boost::system::error_code error;
     boost::asio::write(socket, boost::asio::buffer(packet_string), boost::asio::transfer_all(), error);
 
@@ -53,18 +53,9 @@ void Telemetry::recv_loop() {
     while (connection && !TERMINATE_FLAG) {
         try {
             // Read in data from socket
-            boost::array<char, 1024> buf;
-            boost::system::error_code error;
-            socket.read_some(boost::asio::buffer(buf), error);
-
-            if (error == boost::asio::error::eof) {
-                end();
-                break; // Connection closed cleanly by peer.
-            } else if (error) {
-                throw boost::system::system_error(error); // Some other error.
-            }
-
-            string msg(buf.data());
+            boost::asio::streambuf buf;
+            boost::asio::read_until(socket, buf, "END");
+            string msg = boost::asio::buffer_cast<const char*>(buf.data());
 
             mtx.lock();
             ingest_queue.push(msg);
@@ -72,8 +63,7 @@ void Telemetry::recv_loop() {
 
             log("Telemetry: Received: " + msg);
             this_thread::sleep_for(chrono::seconds(global_config.telemetry.DELAY));
-        }
-        catch (std::exception& e){
+        } catch (std::exception& e){
             log(e.what());
             end();
             throw SOCKET_READ_ERROR();
@@ -87,14 +77,15 @@ bool Telemetry::get_status() const {
 
 void Telemetry::reset() {
     end();
-    if(!connect()){
+    bool connected = connect();
+    if (!connected) {
         end();
     }
 }
 
 bool Telemetry::connect() {
     try {
-        log("Telemetry: Connecting");
+        log("Telemetry: Opening Socket");
         socket.open(boost::asio::ip::tcp::v4());
 
         address ip_address = address::from_string(global_config.telemetry.GS_IP);
