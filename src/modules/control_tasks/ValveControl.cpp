@@ -24,7 +24,7 @@ void ValveControl::begin() {
 }
 
 void ValveControl::execute() {
-    log("Valve control: Executing");
+//    log("Valve control: Executing");
     check_abort();
     auto current_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
@@ -46,7 +46,6 @@ void ValveControl::send_valve_data() {
                 {"state", solenoid_state_map.at(valve_info.state)},
                 {"actuation_type", actuation_type_inverse_map.at(valve_info.actuation_type)}
             };
-//            std::cout << valve_data_json.dump() << std::endl;
         }
     }
 

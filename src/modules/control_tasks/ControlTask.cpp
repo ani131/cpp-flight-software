@@ -47,7 +47,7 @@ void ControlTask::begin() {
 }
 
 void ControlTask::control() {
-    log("Control task: Controlling");
+//    log("Control task: Controlling");
 
     for (auto &control : this->controls) {
         control->execute();

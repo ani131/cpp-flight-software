@@ -83,8 +83,8 @@ void ValveTask::read(){
 }
 
 
-void ValveTask::actuate(){
-    log("Actuating valves");
+void ValveTask::actuate() {
+//    log("Valves: Actuating");
     actuate_solenoids();
 }
 
@@ -122,6 +122,8 @@ void ValveTask::actuate_solenoids() {
             command[0] = ACTUATE_CMD;
             command[1] = pin;
             command[2] = static_cast<char>(target_valve_info.actuation_type);
+
+            log("Actuating valve at " + valve_type + "." + valve_location);
 
             arduino->write(command);
 

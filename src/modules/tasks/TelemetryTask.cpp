@@ -31,8 +31,8 @@ void TelemetryTask::read() {
                     if (!packet_string.empty()) {
                         log("Telemetry: Processing packet: " + packet_string);
                         json packet_json = json::parse(packet_string);
-                        Packet packet;
 
+                        Packet packet;
                         from_json(packet_json, packet);
                         global_registry.telemetry.ingest_queue.push(packet);
                     }
@@ -40,12 +40,12 @@ void TelemetryTask::read() {
             }
         }
 
-        log("Telemetry: Finished reading packets");
+//        log("Telemetry: Finished reading packets");
     }
 }
 
 void TelemetryTask::actuate() {
-    log("Telemetry: Actuating");
+//    log("Telemetry: Actuating");
     if (global_flag.telemetry.reset) {
         this->telemetry.reset();
     } else {

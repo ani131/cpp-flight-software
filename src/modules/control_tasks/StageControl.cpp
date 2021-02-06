@@ -76,7 +76,7 @@ void StageControl::send_progression_request() {
 }
 
 void StageControl::send_data() {
-    log("Sending Stage Data.");
+    log("Stage: Sending data");
     if (this->send_time == 0 || std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() > (this->send_time + this->send_interval)) {
         global_flag.log_info("stage", {
             {"header", "stage_data"},
