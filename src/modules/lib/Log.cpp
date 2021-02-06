@@ -13,7 +13,8 @@ void to_json(json& j, const Log& log) {
 }
 
 void from_json(const json& j, Log& log) {
-    string header, message;
+    string header;
+    json message;
     long double timestamp;
     j.at("header").get_to(header);
     j.at("message").get_to(message);

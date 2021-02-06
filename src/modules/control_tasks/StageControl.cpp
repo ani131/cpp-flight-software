@@ -26,6 +26,7 @@ void StageControl::begin() {
 }
 
 void StageControl::execute() {
+
     double status = calculate_status();
     global_registry.general.stage_status = status;
     bool &progress_flag = global_flag.general.progress;
@@ -46,7 +47,8 @@ double StageControl::calculate_status() const {
     if (current_stage == Stage::WAITING) {
         return 100.0;
     } else if (current_stage == Stage::PRESSURIZATION) {
-       double pressure = global_registry.sensors["pressure"]["PT-2"].normalized_value;
+        // Originally PT-2, verify if PT-7 is PT-2
+       double pressure = global_registry.sensors["pressure"]["PT-7"].normalized_value;
        return std::min(100.0, pressure/4.9);
     } else if (current_stage == Stage::AUTOSEQUENCE) {
         ActuationType mpv_actuation = global_registry.valves["solenoid"]["main_propellant_valve"].actuation_type;
@@ -57,7 +59,7 @@ double StageControl::calculate_status() const {
                 - this->start_time) / this->AUTOSEQUENCE_DELAY) * 100, 99.0);
         }
     } else if(current_stage == Stage::POSTBURN) {
-        double pressure = global_registry.sensors["pressure"]["PT-2"].normalized_value;
+        double pressure = global_registry.sensors["pressure"]["PT-7"].normalized_value;
         double inv = (pressure - 20.0) / 5.0;           // Assuming that "depressurization" means 20psi
         double progress = std::min(100.0, 100.0 - inv);
         return std::max(0.0, progress); //  makes sure that progress isn't negative

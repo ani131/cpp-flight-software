@@ -18,7 +18,8 @@ void PressureControl::begin() {
     this->activate_stages = global_config.pressure_control.active_stages;
     this->valves = global_config.valves.list["solenoid"];
     this->sensors = global_config.sensors.list["pressure"];
-    this->matchups.push_back(make_pair("PT-2", "PRESSURE_RELIEF"));
+    // verify if this should be PT-7
+    this->matchups.push_back(make_pair("PT-7", "PRESSURE_RELIEF"));
 
     for (pair<string , string> matched : this->matchups) {
         try {
@@ -36,6 +37,7 @@ void PressureControl::begin() {
 }
 
 void PressureControl::execute() {
+    log("Pressure Control Executing");
     check_pressure();
 }
 
